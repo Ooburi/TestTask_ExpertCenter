@@ -8,7 +8,7 @@ namespace TestTask_ExpertCenter.Server.Controllers
     [Route("[controller]")]
     public class PriceListController : ControllerBase
     {
-        
+
         private readonly IDBService _db;
         private const int recordsPerPage = 10;
         public PriceListController(IDBService db)
@@ -26,7 +26,7 @@ namespace TestTask_ExpertCenter.Server.Controllers
             return new(
                     (await _db.GetPriceListsAsync(page * recordsPerPage, recordsPerPage)).
                     Select(i => new PriceListRecord(i.Id, i.Caption)),
-                    page+1, countTotalPages
+                    page + 1, countTotalPages
                 );
         }
         [HttpGet("getone/{id}")]
@@ -34,13 +34,13 @@ namespace TestTask_ExpertCenter.Server.Controllers
         {
             var list = await _db.GetPriceListAsync(id);
             var attributes = await _db.GetPriceListAttributeListAsync(id);
-            return new PriceListDetailsRecord(list.Caption, attributes.Select(i=> new ColumnRecord(i.Name,i.Type)));
+            return new PriceListDetailsRecord(list.Caption, attributes.Select(i => new ColumnRecord(i.Name, i.Type)));
         }
-       
+
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] ReceivedRecord data)
         {
-            await  _db.AddPriceListWithAllAttributes(data);
+            await _db.AddPriceListWithAllAttributes(data);
             return Ok();
         }
 

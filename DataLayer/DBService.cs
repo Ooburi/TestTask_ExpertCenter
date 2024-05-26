@@ -1,10 +1,5 @@
 ﻿using DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataLayer
 {
@@ -36,36 +31,37 @@ namespace DataLayer
 
         public async Task<PriceList> GetPriceListAsync(int id)
         {
-           return await _context.PriceLists.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.PriceLists.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<PriceListAttribute>> GetPriceListAttributeListAsync(int id)
         {
-            return await _context.PriceListAttributes.Where(p=>p.PriceListId == id).ToListAsync();
+            return await _context.PriceListAttributes.Where(p => p.PriceListId == id).ToListAsync();
         }
 
         public async Task AddPriceListWithAllAttributes(ReceivedRecord data)
         {
             List<PriceListAttribute> attributes = new List<PriceListAttribute>();
-            PriceList pricelist = new PriceList() { Caption = data.name};
+            PriceList pricelist = new PriceList() { Caption = data.name };
 
             if (data.id != 0)
             {
                 pricelist = await _context.PriceLists.FirstOrDefaultAsync(p => p.Id == data.id);
                 pricelist.Caption = data.name;
 
-                var oldAttributes = _context.PriceListAttributes.Where(a=>a.PriceListId == data.id).ToList();
+                var oldAttributes = _context.PriceListAttributes.Where(a => a.PriceListId == data.id).ToList();
                 _context.PriceListAttributes.RemoveRange(oldAttributes);
                 await _context.SaveChangesAsync();
             }
-            else if(!data.columns.Any())
+            else if (!data.columns.Any())
             {
                 await _context.PriceLists.AddAsync(pricelist);
                 await _context.SaveChangesAsync();
             }
-                   
 
-            foreach (var item in data.columns) {
+
+            foreach (var item in data.columns)
+            {
                 attributes.Add(new PriceListAttribute()
                 {
                     PriceList = pricelist,
@@ -85,14 +81,14 @@ namespace DataLayer
             _context.PriceLists.Remove(priceList);
             _context.SaveChanges();
         }
-       
+
         public async Task<IEnumerable<ProductRecord>> GetProductsAsync(int priceListId)
         {
             var products = await _context.Products
                 .Where(p => p.PriceListId == priceListId)
                 .Include(p => p.Attributes)
                 .Select(p => new ProductRecord(
-                        p, 
+                        p,
                         p.Attributes.Select(a => new ProductAttributeRecord(a.AttributeName, a.AttributeValue))
                         )).ToListAsync();
 
@@ -100,7 +96,7 @@ namespace DataLayer
         }
         public async Task<IEnumerable<string>> GetPriceListHeadersAsync(int priceListId)
         {
-            return await _context.PriceListAttributes.Where(a=>a.PriceListId==priceListId).Select(i=>i.Name).ToListAsync();
+            return await _context.PriceListAttributes.Where(a => a.PriceListId == priceListId).Select(i => i.Name).ToListAsync();
         }
     }
 }

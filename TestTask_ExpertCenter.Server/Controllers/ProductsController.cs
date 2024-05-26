@@ -1,7 +1,6 @@
 ﻿using DataLayer;
 using DataLayer.Models;
 using Microsoft.AspNetCore.Mvc;
-using static DataLayer.DBService;
 
 namespace TestTask_ExpertCenter.Server.Controllers
 {
@@ -23,4 +22,4 @@ namespace TestTask_ExpertCenter.Server.Controllers
     }
 }
 
-    
+
