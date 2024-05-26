@@ -1,0 +1,6 @@
+@TestTask_ExpertCenter.Server_HostAddress = http://localhost:5028
+
+GET {{TestTask_ExpertCenter.Server_HostAddress}}/pricelist/
+Accept: application/json
+
+###
